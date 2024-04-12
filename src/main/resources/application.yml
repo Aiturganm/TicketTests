@@ -1,0 +1,16 @@
+spring:
+    application:
+        name: TicketTests
+    datasource:
+        driver-class-name: org.postgresql.Driver
+        url: jdbc:postgresql://localhost:5433/ticket
+        username: postgres
+        password: postgres
+    jpa:
+        hibernate:
+            ddl-auto: create
+        show-sql: true
+server:
+    error:
+        include-stacktrace: always
+    port: 8080
