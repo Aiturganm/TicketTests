@@ -17,9 +17,7 @@ import tiket.service.TicketService;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.sql.Time;
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,15 +53,13 @@ public class TicketServiceImpl implements TicketService {
             medianPrice = orderPrice.get((orderPrice.size() - 1) / 2);
         }
 
-        List<Duration> durations = ticketRepository.minimalTime();
+        List<Object[]> durations = ticketRepository.minimalTime();
         List<String> strings = new ArrayList<>();
-        int order = 0;
-        for (Duration duration : durations) {
-            long hours = duration.toHours();
-            long minutes = duration.toMinutesPart();
-            long seconds = duration.toSecondsPart();
-            order += 1;
-            strings.add(order + ". Minimum flight time: " + hours + " hour, " + minutes + " minute and " + seconds + " second.");
+        for (Object[] duration : durations) {
+            Integer minFlightDuration = (Integer) duration[1];
+            String carrier = (String) duration[0];
+            LocalTime minTime = LocalTime.of(minFlightDuration/60, minFlightDuration%60);
+            strings.add(carrier + ": Minimum flight time: " + minTime.getHour() + " hours, " + minTime.getMinute() + " minutes.");
         }
 
         return TicketResponse.builder()
@@ -71,5 +67,4 @@ public class TicketServiceImpl implements TicketService {
                 .differenceOfPrice(ticketRepository.averagePrice().subtract(medianPrice).abs())
                 .build();
     }
-
 }
